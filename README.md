@@ -14,11 +14,11 @@ In other words, you will need a central repo to push to that is hook-synced to g
 
 ## Requirements
 1. Install and configure gcloud on the machine you will sync from
-     	```bash
+```bash
      	curl https://sdk.cloud.google.com | bash
      	exec -l $SHELL
      	gcloud init
-     	```
+```
 
 2. You may also have to authorize your machine to log in
 	```bash
