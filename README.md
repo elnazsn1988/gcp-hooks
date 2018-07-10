@@ -14,42 +14,62 @@ In other words, you will need a central repo to push to that is hook-synced to g
 
 ## Requirements
 1. Install and configure gcloud on the machine you will sync from
-     `curl https://sdk.cloud.google.com | bash`
-     `exec -l $SHELL`
-     `gcloud init`
+     	```bash
+     	curl https://sdk.cloud.google.com | bash
+     	exec -l $SHELL
+     	gcloud init
+     	```
 
 2. You may also have to authorize your machine to log in
-	`gcloud auth login`
+	```bash
+	gcloud auth login
+	```
 
 3. Make sure you've already created a project & storage bucket. This can be done in the browser or using gsutil.
-	`gsutil mb -p [PROJECT_NAME] -c [STORAGE_CLASS] -l [BUCKET_LOCATION] gs://[BUCKETNAME]`
+	```bash
+	gsutil mb -p [PROJECT_NAME] -c [STORAGE_CLASS] -l [BUCKET_LOCATION] gs://[BUCKETNAME]
+	```
 
 4. Set the permissions of the bucket so that everyone you want, can indeed, write to it.
-	`gsutil acl help # set permissions with gsutil`
+	```bash
+	gsutil acl help # set permissions with gsutil
+	```
 
 5. Add your local binaries (i.e., wherver gcloud/gsutil lives) to your path in your `~/.bashrc` file
-	`echo "export PATH=/usr/local/bin:${PATH} >> ~/.bashrc`
+	```bash
+	echo "export PATH=/usr/local/bin:${PATH} >> ~/.bashrc
+	```
 
 ## How to use this?
 1. Make a bare repository on a machine with gcloud installed
-	`cd /my/local/bare-repos`
-	`mkdir gcp-hooks-test`
-	`git init --bare`
+	```bash
+	cd /my/local/bare-repos
+	mkdir gcp-hooks-test
+	git init --bare
+	```
 
 2. Clone this repository
-	`git clone https://github.com/seldamat/gcp-hooks.git /my/local/repos/gcp-hooks-test`
+	```bash
+	git clone https://github.com/seldamat/gcp-hooks.git /my/local/repos/gcp-hooks-test
+	```
 
 3. Copy the pre and post receive hooks to the bare repository
-	`cp -iv /my/local/repos/gcp-hooks-test/pre-receive /my/local/bare-repos/gcp-hooks-test/hooks/`
-	`cp -iv /my/local/repos/gcp-hooks-test/post-receive /my/local/bare-repos/gcp-hooks-test/hooks/`
+	```bash
+	cp -iv /my/local/repos/gcp-hooks-test/pre-receive /my/local/bare-repos/gcp-hooks-test/hooks/
+	cp -iv /my/local/repos/gcp-hooks-test/post-receive /my/local/bare-repos/gcp-hooks-test/hooks/
+	```
 
 4. Clone the bare repo to create a work tree then add + commit all your desired files to the new work tree
 
 5. Push to the bare repo (assuming it is set with remote name origin)
-	`git push -o GCS_BUCKET='gs://BUCKETNAME' origin master`
+	```bash
+	git push -o GCS_BUCKET='gs://BUCKETNAME' origin master
+	```
 
 6. You can always create a new repository on github and add that as a remote
-	`git remote add github https://github.com/user/new-github-project.git`
+	```bash
+	git remote add github https://github.com/user/new-github-project.git
+	```
 
 
 ## An aside or two..
