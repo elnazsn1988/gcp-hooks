@@ -2,7 +2,7 @@
 You may have heard Google Cloud Platform trying to make a big break with its new cloud services by offering small grants and vouchers. However, ordinary gitizens might have no clue how to make GCP play nice with current workflows. 
 
 ## What is this?
-Use this repository as a [bare](http://www.saintsjd.com/2011/01/what-is-a-bare-git-repository/) template for a project you would like synced with google cloud storage services.
+Use the hooks in this repository [bare](http://www.saintsjd.com/2011/01/what-is-a-bare-git-repository/) in a bare repository you would like synced with google cloud storage services.
 
 ## Who would need this?
 If you use datalad, git-annex or version control large binary files and don't want to post your files on github. Maybe you want to just avoid using google repositories beacuse of no shell access and would rather sync to a simple bucket?
