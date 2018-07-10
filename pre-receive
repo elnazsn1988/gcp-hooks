@@ -1,0 +1,76 @@
+#!/bin/bash
+## TODO
+### - is there a better way to load env/path
+### - smoother dependency check/install?
+# some colors
+BLUE='\033[1;34m' && NC='\033[0m' && BRED='\033[1;31m' && YELLOW='\033[1;33m' && GREY='\033[1;37m'
+# get parent directory
+CWD=$(pwd)
+# let user know whats happening now
+echo -e "${YELLOW}↪ PRE.RECEIVE GCS.SYNC HOOK - ${GREY}$(whoami)@$(hostname):${CWD}${NC}"
+# source .bashrc on remote bare
+. ${HOME}/.bashrc > /dev/null
+# loop through push options and assign to variables
+if test -n "$GIT_PUSH_OPTION_COUNT"; then
+    i=0
+    while test "$i" -lt "$GIT_PUSH_OPTION_COUNT"; do
+	eval "value=\$GIT_PUSH_OPTION_$i"
+	case "$value" in
+	    GCS_BUCKET=*)
+		GCS_BUCKET=${value#*=}
+		;;
+	    GCP_PROJECT=*)
+		GCP_PROJECT=${value#*=}
+		;;
+	esac
+	i=$((i + 1))
+    done
+fi
+# check if gcloud is installed on remote host
+if [ ! $(which gcloud) ] || [ ! $(which gsutil) ]; then
+     echo -e "❗️ ${BRED}please install the google cloud platform command line tool${NC}"
+     echo -e "\tcurl https://sdk.cloud.google.com | bash"
+     echo -e "\texec -l $SHELL"
+     echo -e "\tgcloud init"
+     exit
+fi
+# check if can use gsutil to list objects
+if gsutil ls > /dev/null; then
+    # create array of GCS objects if they don't exist, otherwise update it in .bashrc
+    if [ ! ${GCS_ARRAY} ]; then
+        # populate current scope with GCS_ARRAY
+        GCS_ARRAY=($(gsutil ls))        
+        echo "# Array of Google Cloud Storage Objects\nexport GCS_ARRAY=("${GCS_ARRAY[@]}")" >> ${HOME}/.bashrc
+    else
+        # populate current scope with GCS_ARRAY
+        GCS_ARRAY=($(gsutil ls))
+        echo "$(cat ${HOME}/.bashrc | sed "s|export GCS_ARRAY=.*|export GCS_ARRAY=($(echo ${GCS_ARRAY[@]}))|g")" > ${HOME}/.bashrc    
+    fi
+    # check if any GCS objects exist
+    if [ $(echo ${#GCS_ARRAY}) -lt 1 ]; then
+        echo -e "⚠️ ${BRED}No Storage Buckets exist on $(whoami)@$(hostname)${NC}"
+        echo "Create one with:"
+        echo "gsutil mb -p [PROJECT_NAME] -c [STORAGE_CLASS] -l [BUCKET_LOCATION] gs://[BUCKETNAME]"
+        exit
+    elif [ $(echo ${#GCS_ARRAY}) -gt 1 ]; then
+        # check if any GCS buckets are defined, if not set to first in array
+        if [ ! ${GCS_BUCKET} ]; then
+            GCS_BUCKET=${GCS_ARRAY[0]}
+        fi
+        echo -e "${BLUE}❍ setting GCS Bucket ${GCS_BUCKET}${NC}"
+        if [ ! "$(grep GCS_BUCKET ${HOME}/.bashrc)" ]; then
+            echo "export GCS_BUCKET=${GCS_BUCKET}" >> ${HOME}/.bashrc
+        else
+            echo "$(cat ${HOME}/.bashrc | sed "s|export GCS_BUCKET=.*|export GCS_BUCKET=${GCS_BUCKET}|g")" > ${HOME}/.bashrc
+        fi
+    fi    
+    . ${HOME}/.bashrc > /dev/null
+else
+    echo -e "⚠️ ${BRED}gsutil exited with error at $(whoami)@$(hostname):${CWD}, try gcloud init and gcloud auth login${NC}"
+    exit
+fi
+# TODO
+## functions
+### status printing (this is a gcp synced repo!)
+### option parsing?
+### dependency check

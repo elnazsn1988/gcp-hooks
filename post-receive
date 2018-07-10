@@ -1,0 +1,49 @@
+#!/bin/bash
+# some colors
+BLUE='\033[1;34m' && NC='\033[0m' && BRED='\033[1;31m' && YELLOW='\033[1;33m'
+# get parent directory
+CWD=$(pwd)
+
+# read list of commits received
+read oldrev newrev refname
+
+# automatically configured by git-annex
+#git annex post-receive
+
+## sync current repository state with mirror hosted on google cloud storage
+function gcs_sync(){
+    # let user know whats happening now
+    echo -e "${YELLOW}↪ POST.RECEIVE GCS.SYNC HOOK${NC}"
+    # load GCS_ARRAY & SELECT from environment
+    . ${HOME}/.bashrc > /dev/null
+    # set only bucket if it exists by default
+    echo -e "${BLUE}❍ syncing this repository to ${GCS_BUCKET}"${NC}     
+    # sync this directory with gcs bucket
+    ## gsutil rsync opts
+    # -P perserve POSIX attributes (UID/GID/MODE/TIME)
+    # -c perform checksums to make sure files match
+    # -C continue if file fails
+    # -d exact mirror of repository
+    # -r descend into sub-dirs/bkts
+    gsutil -m rsync -P -c -C -d -r ${CWD} ${GCS_BUCKET}/$(echo ${CWD} | sed 's|/| |g' | awk '{print $NF}')
+}
+## should we perpetuate commits to verions?
+function gcs_version(){
+    # gsutil versioning set|get [on|off] bucket_url
+    # gsutil setmeta -h "[METADATA_KEY]:[METADATA_VALUE]" gs://[BUCKET_NAME]/[OBJECT_NAME]
+    echo ''
+}
+
+# run sync
+gcs_sync
+
+#
+## loop through commits
+#
+#git rev-list $oldrev..$newrev | while read rev; do
+    #git log -1 --format=%B -n 1 $rev | grep -oE '[A-Z]?[0-9]{1,6}-t[123][abc]?:' | sed 's/://' >> SUBJECTS.txt
+    #	git log -1 --format=%B -n 1 $rev | awk -F "[()]" '{ for (i=2; i<NF; i+=2) print $i }' >> RECON-ARGUMENTS.txt 
+    # get branches
+    #git rev-parse --symbolic --abbrev-ref ${refname} >> BRANCHES.txt
+#    echo ${rev}
+#done
