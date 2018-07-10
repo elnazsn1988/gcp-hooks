@@ -8,9 +8,9 @@ Use the hooks in this repository in a [bare](http://www.saintsjd.com/2011/01/wha
 If you use datalad, git-annex or version control large binary files and don't want to post your files on github. Maybe you want to just avoid using google repositories beacuse of no shell access and would rather sync to a simple bucket?
 
 ## How does it work?
-This repo attempts to rsync google cloud storage after every push. Since it requires software on the receiving end, this only works if you push to a local central repo on a machine with all dependencies installed. 
+This repo attempts to rsync google cloud storage after every push. Since it requires software on the receiving end, this only works if you push to a central repo on a machine with all dependencies installed. 
 
-In general, you fork + clone this template repository as a bare repo on your local machine. Then clone the bare repo to create a work tree and add + commit files to it. Push from the work tree to the local bare repository to sync to GCP.
+In other words, you will need a central repo to push to that is hook-synced to google cloud storage and a repository that you push from i.e) a host for your working tree/files. After you clone this repository, you can copy the pre and post receieve hooks into the central repo you will push to. Push from the working repository to the central repository to sync to GCP.
 
 ## Requirements
 1. Install and configure gcloud on the machine you will sync from
