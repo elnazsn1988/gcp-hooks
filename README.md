@@ -46,7 +46,7 @@ In other words, you will need a central repo to push to that is hook-synced to g
 	cd /my/local/bare-repos
 	mkdir gcp-hooks-test
 	git init --bare
-	git config receive.advertisePushOptions=true
+	git config receive.advertisePushOptions true
 	```
 
 2. Clone this repository
