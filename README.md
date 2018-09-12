@@ -66,6 +66,28 @@ In other words, you will need a central repo to push to that is hook-synced to g
 	```bash
 	git push -o GCS_BUCKET='gs://BUCKETNAME' origin master
 	```
+You should see something like this
+```bash
+git push --force -o GCS_BUCKET='gs://community-life-adolescent-development-study' origin master
+Counting objects: 3, done.
+Delta compression using up to 24 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 260 bytes | 260.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: ↪ PRE.RECEIVE GCS.SYNC HOOK - admin@Voxel-Forge.local:/Volumes/Anvil/sync/datasets/central-repository/clad.institutional-review-board.git
+remote: ❍ setting GCS Bucket gs://community-life-adolescent-development-study
+remote: ↪ POST.RECEIVE GCS.SYNC HOOK
+remote: ❍ syncing this repository to gs://community-life-adolescent-development-study
+remote: Building synchronization state...
+remote: Starting synchronization...
+remote: Copying file:///Volumes/Anvil/sync/datasets/central-repository/clad.institutional-review-board.git/annex/journal.lck [Content-Type=application/octet-stream]...
+remote: / [67/67 files][ 16.2 MiB/ 16.2 MiB] 100% Done
+remote: Operation completed over 67 objects/16.2 MiB.
+To Voxel-Forge.local:~/Anvil/sync/datasets/central-repository/clad.institutional-review-board.git
+   127d6f1..dd98993  master -> master
+```
+
+Be sure to check all the files updated on your bucket.
 
 6. You can always create a new repository on github and add that as a remote
 	```bash
